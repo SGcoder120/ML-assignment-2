@@ -27,8 +27,11 @@ created in the current directory. Constants at the top of `NeuralNet.py` set the
   split into three panels (one per activation function). Colour = (learning rate, #layers); solid = 200 epochs, dashed = 100 epochs.
 - `per_model/*.png`: accuracy and error vs. epochs (train and test) for each individual model.
 
-## Hyperparameters (all 3 x 2 x 2 x 2 = 24 combinations)
-activation ∈ {logistic, tanh, relu}; learning rate ∈ {0.01, 0.1}; epochs ∈ {100, 200}; hidden layers ∈ {2, 3}.
+## Hyperparameters (all 24 combinations)
+activation ∈ {logistic, tanh, relu}
+learning rate ∈ {0.01, 0.1}
+epochs ∈ {100, 200}
+hidden layers ∈ {2, 3}.
 
 ## Changes to the starter code
 The starter's structure (`NeuralNet` class with `preprocess` and `train_evaluate`, the hyperparameter lists, and `train_test_split`) is kept. Modifications:
@@ -44,6 +47,3 @@ The starter's structure (`NeuralNet` class with `preprocess` and `train_evaluate
 - "Error" is the multi-class cross-entropy (log loss) on the predicted probabilities; accuracy is the fraction correctly classified.
 - No missing values exist in this dataset; the code still drops null rows and verifies that all values are valid categories.
 - The 100-epoch and 200-epoch runs use the same seed, so a 100-epoch curve equals the first 100 epochs of the matching 200-epoch curve.
-
-## Brief report
-See `report.md`.
