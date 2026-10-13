@@ -10,10 +10,10 @@ https://raw.githubusercontent.com/SGcoder120/ML-assignment-2/refs/heads/master/c
 Needs Python 3 and the packages in `requirements.txt` (numpy, pandas, scikit-learn, matplotlib).
 
     pip install -r requirements.txt
-    python NeuralNet.py
+    python neural_net.py
 
-You need an internet connection to download the data. To use a different file or URL, change `DATA_URL` at the top of `NeuralNet.py`.
-Nothing is hard-coded to a local path. Everything is saved to a `results/` folder in the current directory.
+You need an internet connection to download the data. To use a different file or URL, change `DATA_URL` at the top of `neural_net.py`.
+Nothing is hard-coded to a local path. Everything is saved to a `results/` folder in the current directory. The `results/` folder in this submission is the output from my run.
 `OUT_DIR`, `SEED` (42) and `NEURONS` (16) at the top of the file can also be changed.
 
 ## What the program does
@@ -35,7 +35,7 @@ I kept the `NeuralNet` class, `preprocess`, `train_evaluate`, the hyperparameter
 - `car.data` has no header row, so the constructor is called with `header=False` and the column names are in the code.
 - Filled in `preprocess` (missing values, checking the categories, converting to numbers, standardizing).
 - `train_evaluate` uses a stratified split with a fixed seed and scikit-learn's `MLPClassifier` (SGD with the default momentum, batch size 200, constant learning rate). It trains one epoch at a time with `partial_fit` so the results after each epoch can be saved. It also writes the table and plots.
-- The data is loaded from the URL in `DATA_URL` instead of a local `train.csv`.
+- The data is loaded from the URL in `DATA_URL`.
 
 ## Assumptions
 - Every hidden layer has 16 neurons.
@@ -44,3 +44,13 @@ I kept the `NeuralNet` class, `preprocess`, `train_evaluate`, the hyperparameter
 - "Error" is cross-entropy loss. Accuracy is the share of cars classified correctly.
 - The dataset has no missing values, but the code still drops rows with missing values and checks that every value is a valid category.
 - The 100-epoch and 200-epoch runs use the same seed, so a 100-epoch curve is the same as the first 100 epochs of the matching 200-epoch curve.
+
+## Report
+The summary of the results and the answer to which activation function worked best is in the report (`HW2_Programming_Report.docx`).
+
+## References
+- Bohanec, M. (1988). Car Evaluation [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5JP48
+- scikit-learn developers. sklearn.neural_network.MLPClassifier. https://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPClassifier.html
+- Anthropic. (2026). Claude Sonnet 5.5 [Large language model]. https://claude.ai
+
+Claude (Anthropic), Sonnet 5.5, October 2026. Used to draft and assist with the theory solutions, the program, the README, and the report, and to assist with debugging and editing. I ran the code and checked the results.
