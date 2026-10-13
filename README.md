@@ -1,49 +1,46 @@
-# CS 4375 HW2 – Programming Part (Neural Networks)
+# CS 4375 HW2: Neural Networks (Programming Part)
 
-**Dataset:** UCI Car Evaluation – https://archive.ics.uci.edu/dataset/19/car+evaluation
-(1728 rows, 6 ordinal attributes, 4-class target: unacc / acc / good / vgood). The data file is not included in the submission.
+Shivesh Gupta
 
-## Requirements
-Python 3, `numpy`, `pandas`, `scikit-learn`, `matplotlib` (see `requirements.txt`)
-Install with: `pip install -r requirements.txt`
+**Dataset:** UCI Car Evaluation, https://archive.ics.uci.edu/dataset/19/car+evaluation
+(1728 cars, 6 attributes, 4 classes: unacc, acc, good, vgood). The data is not included in the submission. The code downloads it from a copy on GitHub:
+https://raw.githubusercontent.com/SGcoder120/ML-assignment-2/refs/heads/master/car.data
 
 ## How to run
-The program loads the data from a public URL by default (a copy of the UCI `car.data` file):
-https://raw.githubusercontent.com/SGcoder120/ML-assignment-2/refs/heads/master/car.data
+Needs Python 3 and the packages in `requirements.txt` (numpy, pandas, scikit-learn, matplotlib).
 
     pip install -r requirements.txt
     python NeuralNet.py
 
-To use a local copy of `car.data` (or another URL) instead, pass it as the only argument:
+You need an internet connection to download the data. To use a different file or URL, change `DATA_URL` at the top of `NeuralNet.py`.
+Nothing is hard-coded to a local path. Everything is saved to a `results/` folder in the current directory.
+`OUT_DIR`, `SEED` (42) and `NEURONS` (16) at the top of the file can also be changed.
 
-    python NeuralNet.py /path/to/car.data
+## What the program does
+It trains 24 neural networks, one for every combination of:
+- activation: logistic, tanh, relu
+- learning rate: 0.01, 0.1
+- epochs: 100, 200
+- hidden layers: 2, 3
 
-No local paths are hard-coded. An internet connection is needed when using the default URL. Output goes to a `results/` folder
-created in the current directory. Constants at the top of `NeuralNet.py` set the output folder, random seed (42) and neurons per hidden layer (16).
+After every epoch it records accuracy and error on the training and test data.
 
-## Outputs (in `results/`)
-- `results_table.csv` (also printed): hyperparameters, training/test accuracy, training/test error for all 24 models.
-- `history_test_acc.png`, `history_train_acc.png`, `history_test_loss.png`, `history_train_loss.png`: history of all 24 models,
-  split into three panels (one per activation function). Colour = (learning rate, #layers); solid = 200 epochs, dashed = 100 epochs.
-- `per_model/*.png`: accuracy and error vs. epochs (train and test) for each individual model.
-
-## Hyperparameters (all 24 combinations)
-activation ∈ {logistic, tanh, relu}
-learning rate ∈ {0.01, 0.1}
-epochs ∈ {100, 200}
-hidden layers ∈ {2, 3}.
+## Output (in `results/`)
+- `results_table.csv` (also printed): hyperparameters, train and test accuracy, and train and test error for each model.
+- `history_test_acc.png`, `history_train_acc.png`, `history_test_loss.png`, `history_train_loss.png`: all 24 models, split into three panels (one per activation). The color is the learning rate and number of layers, solid lines are 200 epochs and dashed lines are 100 epochs.
+- `per_model/`: one plot of accuracy and error against epochs for each model.
 
 ## Changes to the starter code
-The starter's structure (`NeuralNet` class with `preprocess` and `train_evaluate`, the hyperparameter lists, and `train_test_split`) is kept. Modifications:
-- `car.data` has no header row, so the constructor is called with `header=False` and column names are supplied in code.
-- `preprocess` is filled in (nulls, integrity checks, ordinal encoding, standardization).
-- `train_evaluate` uses a stratified, seeded split (`test_size=0.25`, `random_state=42`), builds scikit-learn `MLPClassifier` models (SGD solver with default momentum, batch size 200, constant learning rate), and trains one epoch at a time with `partial_fit` so per-epoch train/test accuracy and loss can be recorded. It also writes the results table and plots.
-- The data path is read from an optional command-line argument and defaults to the public URL above.
+I kept the `NeuralNet` class, `preprocess`, `train_evaluate`, the hyperparameter lists and `train_test_split`. What I changed:
+- `car.data` has no header row, so the constructor is called with `header=False` and the column names are in the code.
+- Filled in `preprocess` (missing values, checking the categories, converting to numbers, standardizing).
+- `train_evaluate` uses a stratified split with a fixed seed and scikit-learn's `MLPClassifier` (SGD with the default momentum, batch size 200, constant learning rate). It trains one epoch at a time with `partial_fit` so the results after each epoch can be saved. It also writes the table and plots.
+- The data is loaded from the URL in `DATA_URL` instead of a local `train.csv`.
 
 ## Assumptions
-- Every hidden layer has 16 neurons (the assignment allows a fixed number).
-- All six attributes are ordinal and are encoded as ordered integers (e.g. low<med<high<vhigh; doors "5more"=5; persons "more"=6), then standardized (zero mean, unit variance) in `preprocess`, i.e. using statistics of the full dataset before the train/test split. Because the attributes have fixed small ranges, the effect on the test set is negligible.
-- 75/25 stratified train/test split (stratified because ~70% of cars are "unacc"), fixed seed 42. One run per configuration, so small differences between models are within seed noise.
-- "Error" is the multi-class cross-entropy (log loss) on the predicted probabilities; accuracy is the fraction correctly classified.
-- No missing values exist in this dataset; the code still drops null rows and verifies that all values are valid categories.
-- The 100-epoch and 200-epoch runs use the same seed, so a 100-epoch curve equals the first 100 epochs of the matching 200-epoch curve.
+- Every hidden layer has 16 neurons.
+- All six attributes are ordered categories, so they are converted to numbers in order (for example low=0, med=1, high=2, vhigh=3; "5more" doors = 5; "more" persons = 6) and then standardized. The standardizing uses the whole dataset before the train/test split, so a little test information leaks into the scaling. The values only take a few fixed numbers, so the effect should be tiny.
+- The split is 75% train and 25% test, stratified because about 70% of the cars are "unacc", with seed 42. Each configuration is run once, so small differences between models could just be randomness.
+- "Error" is cross-entropy loss. Accuracy is the share of cars classified correctly.
+- The dataset has no missing values, but the code still drops rows with missing values and checks that every value is a valid category.
+- The 100-epoch and 200-epoch runs use the same seed, so a 100-epoch curve is the same as the first 100 epochs of the matching 200-epoch curve.
